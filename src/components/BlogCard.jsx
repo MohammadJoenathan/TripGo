@@ -1,44 +1,51 @@
-import React from 'react';
-import { View, Text, Image, TouchableHighlight, StyleSheet } from 'react-native';
-import { COLORS, FONTS } from '../../assets/theme';
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS, FONTS } from "../../assets/theme";
 
-const BlogCard = ({ item, onPress }) => {
+export default function ItemWishlist({ item, onRemove }) {
   return (
-    <TouchableHighlight
-      style={styles.blogWrapper}
-      underlayColor={COLORS.border}
-      onPress={() => onPress(item)}
-    >
+    <View style={styles.blogWrapper}>
       <View style={styles.blogCard}>
         <Image source={{ uri: item.thumbnail }} style={styles.blogImg} />
+
         <View style={styles.textContainer}>
           <Text style={styles.blogTitle} numberOfLines={2}>
             {item.judul}
           </Text>
+
           <Text style={styles.blogMeta}>
             ✍️ {item.penulis} • 🗓️ {item.tanggal}
           </Text>
         </View>
-      </View>
-    </TouchableHighlight>
-  );
-};
 
-export default BlogCard;
+        {/* Tombol hapus wishlist */}
+        <TouchableOpacity
+          style={styles.starBtn}
+          activeOpacity={0.7}
+          onPress={() => onRemove(item.id)}
+        >
+          <Ionicons name="star" size={18} color={COLORS.accent} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   blogWrapper: {
     marginHorizontal: 16,
     marginVertical: 5,
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 
   blogCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 12,
     gap: 12,
     backgroundColor: COLORS.surface,
+    alignItems: "center",
   },
 
   blogImg: {
@@ -63,5 +70,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.gray,
     marginTop: 6,
+  },
+
+  starBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: COLORS.offWhite,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
 });

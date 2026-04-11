@@ -4,10 +4,10 @@
  */
 
 import COLORS from './colors';
-import FONTS from './fonts';
+import FONTS, { fontType } from './fonts';
 
 /**
  * Fungsi export theme
  * supaya bisa dipakai dengan import { COLORS, FONTS }
  */
-export { COLORS, FONTS };
+export { COLORS, FONTS, fontType };
