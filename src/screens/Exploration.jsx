@@ -1,16 +1,30 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+
 import { COLORS, FONTS } from "../../assets/theme";
 import Navbar from "../components/Navbar";
 import BlogCard from "../components/BlogCard";
+
 import { BLOG } from "../data/blogs";
 import { CATEGORIES } from "../data/categories";
 
 export default function Exploration() {
+  const navigation = useNavigation();
+
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  // Gabungkan semua artikel + tambahkan kategori dari section
+
+  // Gabungkan semua artikel
   const allArticles = useMemo(() => {
     let articles = [];
     BLOG.forEach((section) => {
@@ -26,32 +40,41 @@ export default function Exploration() {
   // Filter artikel berdasarkan kategori + search
   const filteredArticles = useMemo(() => {
     let data = allArticles;
-    // filter kategori
+
     if (selectedCategory !== "all") {
       data = data.filter((item) => item.kategori === selectedCategory);
     }
-    // filter search judul
+
     if (searchText.trim() !== "") {
       data = data.filter((item) =>
         item.judul.toLowerCase().includes(searchText.toLowerCase())
       );
     }
+
     return data;
   }, [searchText, selectedCategory, allArticles]);
+
+  // klik tombol wishlist
+  const addWishlist = (item) => {
+    Alert.alert("Wishlist", `${item.judul} berhasil ditambahkan ke wishlist ⭐`);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <Navbar />
+
       <View style={styles.content}>
         <Text style={styles.title}>🔎 Cari Artikel Wisata</Text>
+
         <TextInput
           placeholder="Cari berita wisata Ponorogo..."
           placeholderTextColor={COLORS.gray}
           style={styles.searchInput}
           value={searchText}
-          onChangeText={setSearchText}/>
+          onChangeText={setSearchText}
+        />
 
-        {/* Button kategori sejajar 1 baris */}
+        {/* Button kategori */}
         <View style={styles.categoryRow}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
@@ -60,12 +83,14 @@ export default function Exploration() {
                 styles.catBtn,
                 selectedCategory === cat.id && styles.catBtnActive,
               ]}
-              onPress={() => setSelectedCategory(cat.id)}>
+              onPress={() => setSelectedCategory(cat.id)}
+            >
               <Text
                 style={[
                   styles.catText,
                   selectedCategory === cat.id && styles.catTextActive,
-                ]}>
+                ]}
+              >
                 {cat.label}
               </Text>
             </TouchableOpacity>
@@ -81,10 +106,20 @@ export default function Exploration() {
             data={filteredArticles}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <BlogCard item={item} onPress={() => {}} />
+              <BlogCard
+                item={item}
+                onPress={() =>
+                  navigation.navigate("DetailModal", {
+                    item,
+                    type: "artikel",
+                  })
+                }
+                onWishlist={addWishlist}
+              />
             )}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }} />
+            contentContainerStyle={{ paddingBottom: 100 }}
+          />
         )}
       </View>
     </SafeAreaView>

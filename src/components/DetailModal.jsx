@@ -1,72 +1,96 @@
-import React from 'react';
-import { View, Text, Image, Modal, Button, TouchableWithoutFeedback, StyleSheet,} from 'react-native';
-import { COLORS, FONTS } from '../../assets/theme';
+import React from "react";
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { COLORS, FONTS } from "../../assets/theme";
 
-const DetailModal = ({ visible, item, onClose, type }) => {
-  // Jika tidak ada item, tidak perlu render apapun
-  if (!item) return null;
+export default function DetailModal({ route, navigation }) {
+  const { item, type } = route.params;
 
   // Menentukan sumber gambar dan teks berdasarkan tipe data
-  const imageUri = type === 'wisata' ? item.gambar : item.thumbnail;
-  const title = type === 'wisata' ? item.nama : item.judul;
-  const description = type === 'wisata' ? item.deskripsi : item.konten;
+  const imageUri = type === "wisata" ? item.gambar : item.thumbnail;
+  const title = type === "wisata" ? item.nama : item.judul;
+  const description = type === "wisata" ? item.deskripsi : item.konten;
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      {/* Overlay gelap: menekan area luar modal akan menutupnya */}
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.modalBg} />
-      </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backBtn}
+        >
+          <Ionicons name="arrow-back" size={22} color={COLORS.white} />
+        </TouchableOpacity>
 
-      <View style={styles.modalBox}>
-        <Image source={{ uri: imageUri }} style={styles.modalImg} />
-
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{title}</Text>
-          <Text style={styles.modalText}>{description}</Text>
-          <Button title="Tutup" onPress={onClose} color={COLORS.primary} />
-        </View>
+        <Text style={styles.headerTitle}>Detail</Text>
       </View>
-    </Modal>
+
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <Image source={{ uri: imageUri }} style={styles.image} />
+
+        <View style={styles.body}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.text}>{description}</Text>
+        </View>
+      </ScrollView>
+    </View>
   );
-};
-export default DetailModal;
+}
 
 const styles = StyleSheet.create({
-  modalBg: {
+  container: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: COLORS.background,
   },
 
-  modalBox: {
-    backgroundColor: COLORS.surface,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: 'hidden',
-    maxHeight: '85%',
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: COLORS.primaryDark,
   },
 
-  modalImg: {
-    width: '100%',
-    height: 220,
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.primaryLight,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
 
-  modalContent: {
+  headerTitle: {
+    fontFamily: FONTS.bold,
+    fontSize: 16,
+    color: COLORS.white,
+  },
+
+  content: {
+    flex: 1,
+  },
+
+  image: {
+    width: "100%",
+    height: 240,
+  },
+
+  body: {
     padding: 16,
   },
 
-  modalTitle: {
+  title: {
     fontFamily: FONTS.bold,
     fontSize: 18,
     color: COLORS.charcoal,
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
-  modalText: {
+  text: {
     fontFamily: FONTS.regular,
     fontSize: 13,
     color: COLORS.darkGray,
     lineHeight: 20,
-    marginBottom: 16,
   },
 });

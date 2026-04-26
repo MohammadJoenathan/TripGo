@@ -3,9 +3,13 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS } from "../../assets/theme";
 
-export default function ItemWishlist({ item, onRemove }) {
+export default function BlogCard({ item, onPress }) {
   return (
-    <View style={styles.blogWrapper}>
+    <TouchableOpacity
+      style={styles.blogWrapper}
+      activeOpacity={0.85}
+      onPress={() => onPress(item)}
+    >
       <View style={styles.blogCard}>
         <Image source={{ uri: item.thumbnail }} style={styles.blogImg} />
 
@@ -19,16 +23,11 @@ export default function ItemWishlist({ item, onRemove }) {
           </Text>
         </View>
 
-        {/* Tombol hapus wishlist */}
-        <TouchableOpacity
-          style={styles.starBtn}
-          activeOpacity={0.7}
-          onPress={() => onRemove(item.id)}
-        >
-          <Ionicons name="star" size={18} color={COLORS.accent} />
-        </TouchableOpacity>
+        <View style={styles.arrowBox}>
+          <Ionicons name="chevron-forward" size={18} color={COLORS.gray} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -46,6 +45,9 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: COLORS.surface,
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 12,
   },
 
   blogImg: {
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
 
-  starBtn: {
+  arrowBox: {
     width: 30,
     height: 30,
     borderRadius: 15,

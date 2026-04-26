@@ -1,14 +1,17 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { COLORS, FONTS } from '../../assets/theme';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { COLORS, FONTS } from "../../assets/theme";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Navbar() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
         <TouchableOpacity
           style={styles.profileCircle}
-          onPress={() => Alert.alert('Akun', 'Ini halaman profil akun')}
+          onPress={() => navigation.navigate("Profile")}
           activeOpacity={0.8}
         >
           <Text style={styles.profileText}>N</Text>
@@ -23,7 +26,7 @@ export default function Navbar() {
       <View style={styles.headerRight}>
         <TouchableOpacity
           style={styles.iconBtn}
-          onPress={() => Alert.alert('Notifikasi', 'Tidak ada notifikasi')}
+          onPress={() => navigation.navigate("Notification")}
         >
           <Text>🔔</Text>
         </TouchableOpacity>
@@ -34,17 +37,17 @@ export default function Navbar() {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 18,
     paddingVertical: 12,
     backgroundColor: COLORS.primaryDark,
   },
 
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
 
@@ -53,8 +56,8 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: 19,
     backgroundColor: COLORS.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   profileText: {
@@ -76,7 +79,7 @@ const styles = StyleSheet.create({
   },
 
   headerRight: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
 
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: COLORS.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

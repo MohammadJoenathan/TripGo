@@ -1,48 +1,48 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, FlatList, SectionList, ScrollView, TouchableOpacity, StyleSheet,
-} from 'react-native';
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  SectionList,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 
-import { COLORS, FONTS } from '../../assets/theme';
+import { useNavigation } from "@react-navigation/native";
+import { COLORS, FONTS } from "../../assets/theme";
 
-// Import data statis dari folder data
-import { BLOG } from '../data/blogs';
-import { CATEGORIES } from '../data/categories';
-import { WISATA } from '../data/wisatas';
+import { BLOG } from "../data/blogs";
+import { CATEGORIES } from "../data/categories";
+import { WISATA } from "../data/wisatas";
 
-// Import komponen anak
-import WisataCard from './WisataCard';
-import BlogCard from './BlogCard';
-import DetailModal from './DetailModal';
+import WisataCard from "./WisataCard";
+import BlogCard from "./BlogCard";
+
 export default function ListBlog({ selectedCategory, setSelectedCategory }) {
-  // State: item yang sedang ditampilkan di modal (null = modal tertutup)
-  const [modalItem, setModalItem] = useState(null);
+  const navigation = useNavigation();
 
-  // State: tipe modal yang terbuka, menentukan field mana yang dirender di DetailModal
-  const [modalType, setModalType] = useState('wisata');
-
-  // Memfilter data wisata sesuai kategori aktif (di-memoize agar efisien)
+  // Memfilter data wisata sesuai kategori aktif
   const wisataFiltered = useMemo(() => {
-    if (selectedCategory === 'all') return WISATA;
+    if (selectedCategory === "all") return WISATA;
     return WISATA.filter((w) => w.kategori === selectedCategory);
   }, [selectedCategory]);
 
-  // Memfilter data artikel sesuai kategori aktif (di-memoize agar efisien)
+  // Memfilter data artikel sesuai kategori aktif
   const blogFiltered = useMemo(() => {
-    if (selectedCategory === 'all') return BLOG;
+    if (selectedCategory === "all") return BLOG;
     return BLOG.filter((b) => b.kategori === selectedCategory);
   }, [selectedCategory]);
 
+  // Klik wisata -> buka detail full screen
   const openWisata = (item) => {
-    setModalType('wisata');
-    setModalItem(item);
+    navigation.navigate("DetailModal", { item, type: "wisata" });
   };
 
+  // Klik artikel -> buka detail full screen
   const openArtikel = (item) => {
-    setModalType('artikel');
-    setModalItem(item);
+    navigation.navigate("DetailModal", { item, type: "artikel" });
   };
-
-  const closeModal = () => setModalItem(null);
 
   const ListHeader = () => (
     <View>
@@ -51,9 +51,7 @@ export default function ListBlog({ selectedCategory, setSelectedCategory }) {
       <FlatList
         data={wisataFiltered}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <WisataCard item={item} onPress={openWisata} />
-        )}
+        renderItem={({ item }) => <WisataCard item={item} onPress={openWisata} />}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16 }}
@@ -104,13 +102,6 @@ export default function ListBlog({ selectedCategory, setSelectedCategory }) {
         ListHeaderComponent={ListHeader}
         contentContainerStyle={{ paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
-      />
-
-      <DetailModal
-        visible={!!modalItem}
-        item={modalItem}
-        onClose={closeModal}
-        type={modalType}
       />
     </View>
   );
