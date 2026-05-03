@@ -1,53 +1,86 @@
-import React from "react";
-import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Image,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS } from "../../assets/theme";
 
 export default function DetailModal({ route, navigation }) {
   const { item, type } = route.params;
 
-  // Menentukan sumber gambar dan teks berdasarkan tipe data
   const imageUri = type === "wisata" ? item.gambar : item.thumbnail;
   const title = type === "wisata" ? item.nama : item.judul;
   const description = type === "wisata" ? item.deskripsi : item.konten;
 
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  const clampedScroll = Animated.diffClamp(scrollY, 0, 70);
+
+  const headerTranslateY = clampedScroll.interpolate({
+    inputRange: [0, 70],
+    outputRange: [0, -70],
+  });
+
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      {/* Navbar */}
+      <Animated.View
+        style={[
+          styles.header,
+          { transform: [{ translateY: headerTranslateY }] },
+        ]}
+      >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
+          activeOpacity={0.8}
         >
           <Ionicons name="arrow-back" size={22} color={COLORS.white} />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>Detail</Text>
-      </View>
+      </Animated.View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      {/* Content */}
+      <Animated.ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {/* Gambar pas langsung dibawah header */}
         <Image source={{ uri: imageUri }} style={styles.image} />
 
         <View style={styles.body}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.text}>{description}</Text>
         </View>
-      </ScrollView>
-    </View>
+      </Animated.ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.primaryDark,
   },
 
   header: {
+    height: 70,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 18,
     backgroundColor: COLORS.primaryDark,
   },
 
@@ -69,6 +102,7 @@ const styles = StyleSheet.create({
 
   content: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
 
   image: {

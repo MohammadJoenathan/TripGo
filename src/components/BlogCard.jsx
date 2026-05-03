@@ -1,33 +1,58 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, FONTS } from "../../assets/theme";
 
 export default function BlogCard({ item, onPress }) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(25)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
   return (
-    <TouchableOpacity
-      style={styles.blogWrapper}
-      activeOpacity={0.85}
-      onPress={() => onPress(item)}
+    <Animated.View
+      style={{
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }],
+      }}
     >
-      <View style={styles.blogCard}>
-        <Image source={{ uri: item.thumbnail }} style={styles.blogImg} />
+      <TouchableOpacity
+        style={styles.blogWrapper}
+        activeOpacity={0.85}
+        onPress={() => onPress(item)}
+      >
+        <View style={styles.blogCard}>
+          <Image source={{ uri: item.thumbnail }} style={styles.blogImg} />
 
-        <View style={styles.textContainer}>
-          <Text style={styles.blogTitle} numberOfLines={2}>
-            {item.judul}
-          </Text>
+          <View style={styles.textContainer}>
+            <Text style={styles.blogTitle} numberOfLines={2}>
+              {item.judul}
+            </Text>
 
-          <Text style={styles.blogMeta}>
-            ✍️ {item.penulis} • 🗓️ {item.tanggal}
-          </Text>
+            <Text style={styles.blogMeta}>
+              ✍️ {item.penulis} • 🗓️ {item.tanggal}
+            </Text>
+          </View>
+
+          <View style={styles.arrowBox}>
+            <Ionicons name="chevron-forward" size={18} color={COLORS.gray} />
+          </View>
         </View>
-
-        <View style={styles.arrowBox}>
-          <Ionicons name="chevron-forward" size={18} color={COLORS.gray} />
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
