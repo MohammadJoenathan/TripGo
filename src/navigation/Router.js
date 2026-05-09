@@ -10,6 +10,10 @@ import Profile from "../screens/Profile";
 
 import DetailModal from "../components/DetailModal";
 
+import Login from "../screens/Login";
+import Register from "../screens/Register";
+import AddArtikel from "../screens/AddArtikel";
+
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../assets/theme";
 
@@ -60,8 +64,17 @@ export default function Router() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+
+        {/* pertama kali tampil login */}
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+
+        {/* aplikasi utama */}
         <Stack.Screen name="MainTabs" component={BottomTabs} />
         <Stack.Screen name="DetailModal" component={DetailModal} />
+
+        {/* form tambah artikel */}
+        <Stack.Screen name="AddArtikel" component={AddArtikel} />
       </Stack.Navigator>
     </NavigationContainer>
   );

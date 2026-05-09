@@ -1,72 +1,114 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONTS } from "../../assets/theme";
 import Navbar from "../components/Navbar";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Profile() {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <Navbar />
-      <View style={styles.content}>
+
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         <Text style={styles.pageTitle}>👤 Profil Akun</Text>
+
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>N</Text>
           </View>
+
           <View style={styles.profileInfo}>
             <Text style={styles.name}>Natan</Text>
             <Text style={styles.email}>natan@gmail.com</Text>
           </View>
+
           <TouchableOpacity
             style={styles.editBtn}
-            onPress={() => Alert.alert("Edit Profil", "Fitur edit profil")}>
+            onPress={() => Alert.alert("Edit Profil", "Fitur edit profil")}
+          >
             <Text style={styles.editText}>Edit</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.sectionTitle}>⚙️ Settings</Text>
+
+        {/* Menu Tambahan */}
+        <Text style={styles.sectionTitle}>📌 Menu Artikel</Text>
+
         <View style={styles.settingBox}>
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() =>
-              Alert.alert("Change Password", "Fitur ubah password")
-            }>
+            onPress={() => navigation.navigate("AddArtikel")}
+          >
+            <Text style={styles.settingText}>➕ Tambah Artikel Wisata</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.sectionTitle}>⚙️ Settings</Text>
+
+        <View style={styles.settingBox}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => Alert.alert("Change Password", "Fitur ubah password")}
+          >
             <Text style={styles.settingText}>🔒 Change Password</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => Alert.alert("Notification", "Pengaturan notifikasi")}>
+            onPress={() => Alert.alert("Notification", "Pengaturan notifikasi")}
+          >
             <Text style={styles.settingText}>🔔 Notification</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() => Alert.alert("Theme", "Pengaturan tema aplikasi")}>
+            onPress={() => Alert.alert("Theme", "Pengaturan tema aplikasi")}
+          >
             <Text style={styles.settingText}>🎨 Theme</Text>
           </TouchableOpacity>
         </View>
+
         <Text style={styles.sectionTitle}>ℹ️ About</Text>
+
         <View style={styles.settingBox}>
           <TouchableOpacity
             style={styles.settingItem}
             onPress={() =>
               Alert.alert("Privacy Policy", "Halaman kebijakan privasi")
-            }>
+            }
+          >
             <Text style={styles.settingText}>📄 Privacy Policy</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.settingItem}
-            onPress={() =>
-              Alert.alert("Support Center", "Hubungi support TripGo")
-            }>
+            onPress={() => Alert.alert("Support Center", "Hubungi support TripGo")}
+          >
             <Text style={styles.settingText}>💬 Support Center</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Logout */}
         <TouchableOpacity
           style={styles.logoutBtn}
-          onPress={() => Alert.alert("Logout", "Anda berhasil logout")}>
+          onPress={() => navigation.replace("Login")}
+        >
           <Text style={styles.logoutText}>🚪 Logout</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
