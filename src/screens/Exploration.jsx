@@ -1,22 +1,25 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
   Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { FlashList } from "@shopify/flash-list";
 
 import { COLORS, FONTS } from "../../assets/theme";
 import Navbar from "../components/Navbar";
 import BlogCard from "../components/BlogCard";
 
-import { BLOG } from "../data/blogs";
 import { CATEGORIES } from "../data/categories";
+import formatDate from "../utils/formatDate";
+
+const API_URL = "https://6a056abcaa826ca75c09c909.mockapi.io/artikel";
 
 export default function Exploration() {
   const navigation = useNavigation();
@@ -24,40 +27,51 @@ export default function Exploration() {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  // Gabungkan semua artikel
-  const allArticles = useMemo(() => {
-    let articles = [];
-    BLOG.forEach((section) => {
-      const mapped = section.data.map((item) => ({
+  const [artikel, setArtikel] = useState([]);
+
+  const fetchArtikel = async () => {
+    try {
+      const res = await axios.get(API_URL);
+
+      const mapped = res.data.map((item) => ({
         ...item,
-        kategori: section.kategori,
+        date: formatDate(item.createdAt),
       }));
-      articles = [...articles, ...mapped];
-    });
-    return articles;
+
+      setArtikel(mapped);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Gagal mengambil artikel!");
+    }
+  };
+
+  useEffect(() => {
+    fetchArtikel();
   }, []);
 
-  // Filter artikel berdasarkan kategori + search
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchArtikel();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const filteredArticles = useMemo(() => {
-    let data = allArticles;
+    let data = artikel;
 
     if (selectedCategory !== "all") {
-      data = data.filter((item) => item.kategori === selectedCategory);
+      data = data.filter((item) => item.category === selectedCategory);
     }
 
     if (searchText.trim() !== "") {
       data = data.filter((item) =>
-        item.judul.toLowerCase().includes(searchText.toLowerCase())
+        item.title.toLowerCase().includes(searchText.toLowerCase())
       );
     }
 
     return data;
-  }, [searchText, selectedCategory, allArticles]);
-
-  // klik tombol wishlist
-  const addWishlist = (item) => {
-    Alert.alert("Wishlist", `${item.judul} berhasil ditambahkan ke wishlist ⭐`);
-  };
+  }, [searchText, selectedCategory, artikel]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
@@ -67,14 +81,13 @@ export default function Exploration() {
         <Text style={styles.title}>🔎 Cari Artikel Wisata</Text>
 
         <TextInput
-          placeholder="Cari berita wisata Ponorogo..."
+          placeholder="Cari artikel wisata Ponorogo..."
           placeholderTextColor={COLORS.gray}
           style={styles.searchInput}
           value={searchText}
           onChangeText={setSearchText}
         />
 
-        {/* Button kategori */}
         <View style={styles.categoryRow}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
@@ -102,8 +115,9 @@ export default function Exploration() {
         {filteredArticles.length === 0 ? (
           <Text style={styles.emptyText}>Tidak ada artikel yang ditemukan.</Text>
         ) : (
-          <FlatList
+          <FlashList
             data={filteredArticles}
+            estimatedItemSize={120}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <BlogCard
@@ -114,7 +128,6 @@ export default function Exploration() {
                     type: "artikel",
                   })
                 }
-                onWishlist={addWishlist}
               />
             )}
             showsVerticalScrollIndicator={false}

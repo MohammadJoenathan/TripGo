@@ -1,11 +1,24 @@
 import React, { useRef } from "react";
-import { View, Text, Image, TouchableWithoutFeedback, StyleSheet, Dimensions, Animated } from "react-native";
+import {
+  Text,
+  Image,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Dimensions,
+  Animated,
+} from "react-native";
 import { COLORS, FONTS } from "../../assets/theme";
 
 const { width } = Dimensions.get("window");
 
 export default function WisataCard({ item, onPress }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // Interpolation: scale -> opacity overlay
+  const overlayOpacity = scaleAnim.interpolate({
+    inputRange: [0.95, 1],
+    outputRange: [0.7, 0.45],
+  });
 
   const onPressIn = () => {
     Animated.spring(scaleAnim, {
@@ -30,9 +43,18 @@ export default function WisataCard({ item, onPress }) {
     >
       <Animated.View style={[styles.slide, { transform: [{ scale: scaleAnim }] }]}>
         <Image source={{ uri: item.gambar }} style={styles.slideImg} />
-        <View style={styles.slideInfo}>
+
+        {/* Overlay menggunakan Interpolation */}
+        <Animated.View
+          style={[
+            styles.slideInfo,
+            {
+              opacity: overlayOpacity,
+            },
+          ]}
+        >
           <Text style={styles.slideTitle}>{item.nama}</Text>
-        </View>
+        </Animated.View>
       </Animated.View>
     </TouchableWithoutFeedback>
   );
@@ -59,7 +81,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 10,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "black",
   },
 
   slideTitle: {

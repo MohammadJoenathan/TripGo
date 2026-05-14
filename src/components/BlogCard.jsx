@@ -35,15 +35,15 @@ export default function BlogCard({ item, onPress }) {
         onPress={() => onPress(item)}
       >
         <View style={styles.blogCard}>
-          <Image source={{ uri: item.thumbnail }} style={styles.blogImg} />
+          <Image source={{ uri: item.image }} style={styles.blogImg} />
 
           <View style={styles.textContainer}>
             <Text style={styles.blogTitle} numberOfLines={2}>
-              {item.judul}
+              {item.title}
             </Text>
 
             <Text style={styles.blogMeta}>
-              ✍️ {item.penulis} • 🗓️ {item.tanggal}
+              ✍️ TripGo Team • 🗓️ {item.date}
             </Text>
           </View>
 

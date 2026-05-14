@@ -13,6 +13,7 @@ import DetailModal from "../components/DetailModal";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import AddArtikel from "../screens/AddArtikel";
+import EditArtikel from "../screens/EditArtikel";
 
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../../assets/theme";
@@ -75,6 +76,7 @@ export default function Router() {
 
         {/* form tambah artikel */}
         <Stack.Screen name="AddArtikel" component={AddArtikel} />
+        <Stack.Screen name="EditArtikel" component={EditArtikel} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -14,15 +14,17 @@ import { COLORS, FONTS } from "../../assets/theme";
 
 const API_URL = "https://6a056abcaa826ca75c09c909.mockapi.io/artikel";
 
-export default function AddArtikel({ navigation }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
-  const [category, setCategory] = useState("Alam");
+export default function EditArtikel({ route, navigation }) {
+  const { item } = route.params;
+
+  const [title, setTitle] = useState(item.title);
+  const [description, setDescription] = useState(item.description);
+  const [image, setImage] = useState(item.image);
+  const [category, setCategory] = useState(item.category);
 
   const [loading, setLoading] = useState(false);
 
-  const handleUpload = async () => {
+  const handleUpdate = async () => {
     if (!title || !description || !image) {
       Alert.alert("Validasi", "Semua input wajib diisi!");
       return;
@@ -31,19 +33,18 @@ export default function AddArtikel({ navigation }) {
     setLoading(true);
 
     try {
-      await axios.post(API_URL, {
+      await axios.put(`${API_URL}/${item.id}`, {
         title,
         description,
         image,
         category,
-        createdAt: new Date().toISOString(),
       });
 
-      Alert.alert("Sukses", "Artikel berhasil ditambahkan!");
+      Alert.alert("Sukses", "Artikel berhasil diperbarui!");
       navigation.goBack();
     } catch (error) {
       console.log(error);
-      Alert.alert("Error", "Gagal menambahkan artikel!");
+      Alert.alert("Error", "Gagal update artikel!");
     } finally {
       setLoading(false);
     }
@@ -52,77 +53,58 @@ export default function AddArtikel({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.title}>📝 Tulis Artikel Wisata</Text>
+        <Text style={styles.title}>✏️ Edit Artikel</Text>
 
-        <Text style={styles.label}>Judul Artikel</Text>
-        <TextInput
-          placeholder="Masukkan judul..."
-          placeholderTextColor={COLORS.gray}
-          style={styles.input}
-          value={title}
-          onChangeText={setTitle}
-        />
+        <Text style={styles.label}>Judul</Text>
+        <TextInput style={styles.input} value={title} onChangeText={setTitle} />
 
         <Text style={styles.label}>Deskripsi</Text>
         <TextInput
-          placeholder="Masukkan deskripsi..."
-          placeholderTextColor={COLORS.gray}
           style={[styles.input, { height: 100, textAlignVertical: "top" }]}
           multiline
           value={description}
           onChangeText={setDescription}
         />
 
-        <Text style={styles.label}>Link Gambar (URL)</Text>
-        <TextInput
-          placeholder="Masukkan link gambar..."
-          placeholderTextColor={COLORS.gray}
-          style={styles.input}
-          value={image}
-          onChangeText={setImage}
-        />
+        <Text style={styles.label}>Link Gambar</Text>
+        <TextInput style={styles.input} value={image} onChangeText={setImage} />
 
         <Text style={styles.label}>Kategori</Text>
-
         <View style={styles.categoryRow}>
-          {["Alam", "Budaya", "Kuliner"].map((item) => (
+          {["Alam", "Budaya", "Kuliner"].map((cat) => (
             <TouchableOpacity
-              key={item}
+              key={cat}
               style={[
                 styles.catBtn,
-                category === item && styles.catBtnActive,
+                category === cat && styles.catBtnActive,
               ]}
-              onPress={() => setCategory(item)}
+              onPress={() => setCategory(cat)}
             >
               <Text
                 style={[
                   styles.catText,
-                  category === item && styles.catTextActive,
+                  category === cat && styles.catTextActive,
                 ]}
               >
-                {item}
+                {cat}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
         <TouchableOpacity
-          style={styles.uploadBtn}
-          onPress={handleUpload}
-          activeOpacity={0.8}
+          style={styles.saveBtn}
+          onPress={handleUpdate}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color={COLORS.white} />
           ) : (
-            <Text style={styles.uploadText}>Unggah</Text>
+            <Text style={styles.saveText}>Simpan Perubahan</Text>
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.backBtn}
-          onPress={() => navigation.goBack()}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>⬅ Kembali</Text>
         </TouchableOpacity>
       </View>
@@ -202,28 +184,25 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
 
-  uploadBtn: {
+  saveBtn: {
     paddingVertical: 14,
     borderRadius: 16,
-    backgroundColor: COLORS.accent,
+    backgroundColor: COLORS.primary,
     alignItems: "center",
     marginTop: 10,
+    marginBottom: 15,
   },
 
-  uploadText: {
+  saveText: {
     fontFamily: FONTS.bold,
     fontSize: 14,
     color: COLORS.white,
-  },
-
-  backBtn: {
-    marginTop: 15,
-    alignItems: "center",
   },
 
   backText: {
     fontFamily: FONTS.medium,
     fontSize: 13,
     color: COLORS.primary,
+    textAlign: "center",
   },
 });

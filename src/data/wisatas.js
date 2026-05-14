@@ -8,14 +8,6 @@ export const WISATA = [
     deskripsi: 'Danau indah di kaki Gunung Wilis, cocok untuk healing.',
   },
   {
-    id: 'w2',
-    nama: 'Goa Lowo',
-    kategori: 'Alam',
-    gambar:
-      'https://aswajanews.isnuponorogo.org/wp-content/uploads/2024/09/IMG-20240901-WA0017.jpg',
-    deskripsi: 'Gua wisata panjang dengan stalaktit yang menakjubkan.',
-  },
-  {
     id: 'w3',
     nama: 'Reog Ponorogo',
     kategori: 'Budaya',
